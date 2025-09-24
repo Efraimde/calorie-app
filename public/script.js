@@ -38,7 +38,6 @@ async function calcularDeficit() {
   const nivelAtividade = document.getElementById('nivelAtividade').value;
 
   if (!peso || !altura || !idade) return alert('Preencha todos os campos!');
-
   if (listaAlimentos.length === 0) return alert('Adicione pelo menos um alimento ou líquido.');
 
   // Somar calorias de todos os alimentos
@@ -55,9 +54,11 @@ async function calcularDeficit() {
     const deficitData = await deficitRes.json();
     if (deficitData.error) return alert('Erro: ' + deficitData.error);
 
+    // Mostrar resultados completos
     document.getElementById('resultado').textContent =
       `Calorias totais consumidas: ${caloriasConsumidas} kcal\n` +
       `Seu TDEE (gasto diário) é ${deficitData.tdee} kcal\n` +
+      `Para manter seu peso, você precisa consumir aproximadamente ${deficitData.tdee} kcal por dia.\n` +
       `Déficit calórico: ${deficitData.deficit} kcal`;
   } catch (err) {
     alert('Erro ao calcular déficit: ' + err.message);
