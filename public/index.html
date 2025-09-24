@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Déficit Calórico</title>
+</head>
+<body>
+  <h1>Calculadora de Déficit Calórico</h1>
+
+  <h2>Dados Pessoais</h2>
+  <input type="number" id="peso" placeholder="Peso (kg)">
+  <input type="number" id="altura" placeholder="Altura (cm)">
+  <input type="number" id="idade" placeholder="Idade">
+  <select id="sexo">
+    <option value="masculino">Masculino</option>
+    <option value="feminino">Feminino</option>
+  </select>
+  <select id="nivelAtividade">
+    <option value="sedentario">Sedentário</option>
+    <option value="leve">Levemente ativo</option>
+    <option value="moderado">Moderadamente ativo</option>
+    <option value="intenso">Intensamente ativo</option>
+    <option value="muitoIntenso">Muito intenso</option>
+  </select>
+
+  <h2>Alimento Consumido</h2>
+  <input type="text" id="alimento" placeholder="Digite um alimento">
+  <button onclick="calcularDeficit()">Calcular</button>
+
+  <p id="resultado"></p>
+
+  <script src="script.js"></script>
+</body>
+</html>
