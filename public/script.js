@@ -1,11 +1,25 @@
 let listaAlimentos = [];
 
+// Função para buscar uma imagem básica do alimento
+function obterImagem(nome) {
+  const imgMap = {
+    "maçã": "https://img.icons8.com/color/48/apple.png",
+    "banana": "https://img.icons8.com/color/48/banana.png",
+    "leite": "https://img.icons8.com/color/48/milk-bottle.png",
+    "suco": "https://img.icons8.com/color/48/orange-juice.png",
+    "pão": "https://img.icons8.com/color/48/bread.png",
+    "arroz": "https://img.icons8.com/color/48/rice-bowl.png",
+    "refrigerante": "https://img.icons8.com/color/48/soda.png",
+    "café": "https://img.icons8.com/color/48/coffee.png"
+  };
+  return imgMap[nome.toLowerCase()] || "https://img.icons8.com/color/48/meal.png";
+}
+
 async function adicionarAlimento() {
   const nome = document.getElementById('alimento').value;
   if (!nome) return alert('Digite um alimento ou líquido.');
 
   try {
-    // Buscar calorias do alimento
     const alimentoRes = await fetch('/api/alimento', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -15,19 +29,43 @@ async function adicionarAlimento() {
     const alimentoData = await alimentoRes.json();
     if (alimentoData.error) return alert('Erro: ' + alimentoData.error);
 
-    // Adicionar à lista
     listaAlimentos.push(alimentoData);
-
-    // Atualizar lista na tela
-    const ul = document.getElementById('lista-alimentos');
-    const li = document.createElement('li');
-    li.textContent = `${alimentoData.nome}: ${alimentoData.calorias} kcal`;
-    ul.appendChild(li);
-
+    atualizarLista();
     document.getElementById('alimento').value = '';
   } catch (err) {
     alert('Erro ao buscar alimento: ' + err.message);
   }
+}
+
+function atualizarLista() {
+  const ul = document.getElementById('lista-alimentos');
+  ul.innerHTML = '';
+
+  listaAlimentos.forEach((item, index) => {
+    const li = document.createElement('li');
+
+    // Imagem do alimento
+    const img = document.createElement('img');
+    img.src = obterImagem(item.nome);
+    img.alt = item.nome;
+
+    // Texto do item
+    const span = document.createElement('span');
+    span.textContent = `${item.nome}: ${item.calorias} kcal`;
+
+    // Botão remover
+    const btnRemover = document.createElement('button');
+    btnRemover.textContent = 'Remover';
+    btnRemover.onclick = () => {
+      listaAlimentos.splice(index, 1);
+      atualizarLista();
+    };
+
+    li.appendChild(img);
+    li.appendChild(span);
+    li.appendChild(btnRemover);
+    ul.appendChild(li);
+  });
 }
 
 async function calcularDeficit() {
@@ -40,11 +78,9 @@ async function calcularDeficit() {
   if (!peso || !altura || !idade) return alert('Preencha todos os campos!');
   if (listaAlimentos.length === 0) return alert('Adicione pelo menos um alimento ou líquido.');
 
-  // Somar calorias de todos os alimentos
   const caloriasConsumidas = listaAlimentos.reduce((total, item) => total + item.calorias, 0);
 
   try {
-    // Calcular déficit
     const deficitRes = await fetch('/api/deficit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -54,7 +90,6 @@ async function calcularDeficit() {
     const deficitData = await deficitRes.json();
     if (deficitData.error) return alert('Erro: ' + deficitData.error);
 
-    // Mostrar resultados completos
     document.getElementById('resultado').textContent =
       `Calorias totais consumidas: ${caloriasConsumidas} kcal\n` +
       `Seu TDEE (gasto diário) é ${deficitData.tdee} kcal\n` +
