@@ -17,7 +17,7 @@ function obterImagem(nome) {
 
 // Adicionar alimento à lista
 async function adicionarAlimento() {
-  const nome = document.getElementById('alimento').value;
+  const nome = document.getElementById('alimento').value.trim();
   if (!nome) return alert('Digite um alimento ou líquido.');
 
   try {
@@ -78,4 +78,37 @@ async function calcularDeficit() {
   if (!peso || !altura || !idade) return alert('Preencha todos os campos!');
   if (listaAlimentos.length === 0) return alert('Adicione pelo menos um alimento ou líquido.');
 
-  const caloriasConsumidas = listaAlimentos.reduce((total, item) => tot
+  const caloriasConsumidas = listaAlimentos.reduce((total, item) => total + item.calorias, 0);
+
+  try {
+    const deficitRes = await fetch('/api/deficit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ peso, altura, idade, sexo, nivelAtividade, caloriasConsumidas })
+    });
+
+    const deficitData = await deficitRes.json();
+    if (deficitData.error) return alert('Erro: ' + deficitData.error);
+
+    document.getElementById('resultado').textContent =
+      `Calorias totais consumidas: ${caloriasConsumidas} kcal\n` +
+      `Seu TDEE (gasto diário) é ${deficitData.tdee} kcal\n` +
+      `Para manter seu peso, você precisa consumir aproximadamente ${deficitData.tdee} kcal por dia.\n` +
+      `Déficit calórico: ${deficitData.deficit} kcal`;
+  } catch (err) {
+    alert('Erro ao calcular déficit: ' + err.message);
+  }
+}
+
+// Calcular déficit base antes de adicionar alimentos
+async function calcularDeficitBase() {
+  const peso = parseFloat(document.getElementById('peso').value);
+  const altura = parseFloat(document.getElementById('altura').value);
+  const idade = parseInt(document.getElementById('idade').value);
+  const sexo = document.getElementById('sexo').value;
+  const nivelAtividade = document.getElementById('nivelAtividade').value;
+
+  if (!peso || !altura || !idade) return alert('Preencha todos os campos!');
+
+  try {
+    const res = await
