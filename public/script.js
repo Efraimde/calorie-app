@@ -15,6 +15,7 @@ function obterImagem(nome) {
   return imgMap[nome.toLowerCase()] || "https://img.icons8.com/color/48/meal.png";
 }
 
+// Adicionar alimento à lista
 async function adicionarAlimento() {
   const nome = document.getElementById('alimento').value;
   if (!nome) return alert('Digite um alimento ou líquido.');
@@ -37,6 +38,7 @@ async function adicionarAlimento() {
   }
 }
 
+// Atualizar lista na tela com botão remover e imagem
 function atualizarLista() {
   const ul = document.getElementById('lista-alimentos');
   ul.innerHTML = '';
@@ -44,16 +46,13 @@ function atualizarLista() {
   listaAlimentos.forEach((item, index) => {
     const li = document.createElement('li');
 
-    // Imagem do alimento
     const img = document.createElement('img');
     img.src = obterImagem(item.nome);
     img.alt = item.nome;
 
-    // Texto do item
     const span = document.createElement('span');
     span.textContent = `${item.nome}: ${item.calorias} kcal`;
 
-    // Botão remover
     const btnRemover = document.createElement('button');
     btnRemover.textContent = 'Remover';
     btnRemover.onclick = () => {
@@ -68,6 +67,7 @@ function atualizarLista() {
   });
 }
 
+// Calcular déficit com alimentos adicionados
 async function calcularDeficit() {
   const peso = parseFloat(document.getElementById('peso').value);
   const altura = parseFloat(document.getElementById('altura').value);
@@ -78,24 +78,4 @@ async function calcularDeficit() {
   if (!peso || !altura || !idade) return alert('Preencha todos os campos!');
   if (listaAlimentos.length === 0) return alert('Adicione pelo menos um alimento ou líquido.');
 
-  const caloriasConsumidas = listaAlimentos.reduce((total, item) => total + item.calorias, 0);
-
-  try {
-    const deficitRes = await fetch('/api/deficit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ peso, altura, idade, sexo, nivelAtividade, caloriasConsumidas })
-    });
-
-    const deficitData = await deficitRes.json();
-    if (deficitData.error) return alert('Erro: ' + deficitData.error);
-
-    document.getElementById('resultado').textContent =
-      `Calorias totais consumidas: ${caloriasConsumidas} kcal\n` +
-      `Seu TDEE (gasto diário) é ${deficitData.tdee} kcal\n` +
-      `Para manter seu peso, você precisa consumir aproximadamente ${deficitData.tdee} kcal por dia.\n` +
-      `Déficit calórico: ${deficitData.deficit} kcal`;
-  } catch (err) {
-    alert('Erro ao calcular déficit: ' + err.message);
-  }
-}
+  const caloriasConsumidas = listaAlimentos.reduce((total, item) => tot
