@@ -23,9 +23,12 @@
     <option value="muitoIntenso">Muito intenso</option>
   </select>
 
-  <h2>Alimento Consumido</h2>
-  <input type="text" id="alimento" placeholder="Digite um alimento">
-  <button onclick="calcularDeficit()">Calcular</button>
+  <h2>Alimentos / Líquidos Consumidos</h2>
+  <input type="text" id="alimento" placeholder="Digite alimento ou líquido">
+  <button onclick="adicionarAlimento()">Adicionar</button>
+
+  <ul id="lista-alimentos"></ul>
+  <button onclick="calcularDeficit()">Calcular Déficit</button>
 
   <p id="resultado"></p>
 
